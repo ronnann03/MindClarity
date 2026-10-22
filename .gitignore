@@ -1,0 +1,63 @@
+# ==========================================
+# MindClarity - Git Ignore Configuration
+# ==========================================
+
+# Archivos de entorno y credenciales (¡NUNCA subir a GitHub!)
+.env
+.env.local
+.env.*.local
+
+# Entornos virtuales de Python
+.venv/
+.venv_311/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Bytecode y compilados
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+*.so
+
+# Caches y modelos descargados en tiempo de ejecución
+.cache/
+.pytest_cache/
+vosk-model*
+*.onnx
+*.bin
+
+# Logs y registros
+logs/
+*.log
+
+# Artefactos temporales y pruebas
+artifacts/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# PyInstaller y empaquetado
+dist/
+build/
+*.manifest
+*.spec.bak
+*.egg-info/
+
+# Archivos locales de sistema operativo
+Thumbs.db
+[Dd]esktop.ini
+.DS_Store
+$RECYCLE.BIN/
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/

@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>YU — Asistente de IA Neuronal 3D (60 FPS Ultra-Optimizado)</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+  :root {
+    --bg-dark: #02040a;
+    --cyan-primary: #00f2ff;
+    --cyan-glow: rgba(0, 242, 255, 0.45);
+    --cyan-dim: rgba(0, 242, 255, 0.08);
+    --purple-neon: #b55fe6;
+    --purple-glow: rgba(181, 95, 230, 0.4);
+    --text-bright: #ffffff;
+    --text-muted: #94a3b8;
+    --text-dim: #475569;
+    
+    --glass-bg: rgba(6, 11, 25, 0.55);
+    --glass-border: rgba(0, 242, 255, 0.15);
+    --glass-hover: rgba(0, 242, 255, 0.35);
+
+    --amber-gold: #ffb84d;
+    --emerald-green: #2ecc71;
+    --rose-red: #ff4757;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-bright);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Fullscreen Ethereal Neural Particle Canvas */
+  canvas#bg-neural-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.75;
+    will-change: transform;
+  }
+
+  /* Main HUD Viewport (Frameless Layout) */
+  #app {
+    position: relative;
+    z-index: 2;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 36px;
+  }
+
+  /* Top Minimalist Floating Bar */
+  .top-hud-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    z-index: 10;
+  }
+
+  .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .brand-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #ffffff, var(--cyan-primary), var(--purple-neon));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 24px var(--cyan-glow);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-logo i {
+    color: var(--cyan-primary);
+    filter: drop-shadow(0 0 10px var(--cyan-primary));
+  }
+
+  .synapse-pill {
+    background: rgba(181, 95, 230, 0.1);
+    border: 1px solid rgba(181, 95, 230, 0.3);
+    color: var(--purple-neon);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .glass-pill {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-bright);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .glass-pill:hover {
+    background: rgba(0, 242, 255, 0.15);
+    border-color: var(--cyan-primary);
+    box-shadow: 0 0 16px var(--cyan-glow);
+    transform: translateY(-1px);
+  }
+
+  .glass-btn {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+    font-size: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .glass-btn:hover {
+    background: rgba(0, 242, 255, 0.15);
+    border-color: var(--cyan-primary);
+    color: var(--cyan-primary);
+    box-shadow: 0 0 16px var(--cyan-glow);
+    transform: scale(1.05);
+  }
+
+  /* Center Floating Holographic Neural Area (3D ENLARGED & HARDWARE ACCELERATED) */
+  .center-neural-workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 10px 0;
+  }
+
+  #canvas-wrapper {
+    position: relative;
+    width: 460px;
+    height: 460px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  #canvas-wrapper:hover {
+    transform: scale(1.03);
+  }
+
+  canvas#jarvis-canvas {
+    width: 460px;
+    height: 460px;
+    /* GPU Hardware Accelerated Drop Shadow Glow instead of expensive CPU shadowBlur */
+    filter: drop-shadow(0 0 24px rgba(0, 242, 255, 0.4));
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .hud-center-icon {
+    position: absolute;
+    font-size: 78px;
+    color: var(--cyan-primary);
+    text-shadow: 0 0 38px var(--cyan-glow);
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+
+  .hud-caption {
+    font-size: 15px;
+    color: var(--cyan-primary);
+    margin-top: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 16px var(--cyan-glow);
+    text-transform: uppercase;
+  }
+
+  /* Real-Time Live Transcript Capsule */
+  .live-transcript-box {
+    margin-top: 14px;
+    background: rgba(0, 242, 255, 0.08);
+    border: 1px solid var(--cyan-primary);
+    border-radius: 30px;
+    padding: 10px 24px;
+    font-size: 14px;
+    color: var(--cyan-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    box-shadow: 0 0 28px var(--cyan-glow);
+    backdrop-filter: blur(16px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 650px;
+    text-align: center;
+  }
+
+  .live-transcript-box.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+  }
+
+  .live-transcript-box .interim-text {
+    color: #ffffff;
+    font-style: italic;
+  }
+
+  .confidence-badge {
+    background: rgba(46, 204, 113, 0.2);
+    border: 1px solid var(--emerald-green);
+    color: var(--emerald-green);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  /* Connection Alert Banner */
+  #conn-banner {
+    display: none;
+    position: absolute;
+    top: 80px;
+    background: rgba(255, 71, 87, 0.15);
+    color: #ff8585;
+    border: 1px solid rgba(255, 71, 87, 0.4);
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-size: 13px;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.3s ease;
+  }
+
+  #conn-banner.show { display: block; }
+
+  /* Floating Clean Transcripts Feed Area */
+  #chat-feed {
+    width: 100%;
+    max-width: 780px;
+    height: 140px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 6px 16px;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    margin-top: 6px;
+  }
+
+  #chat-feed::-webkit-scrollbar { display: none; }
+
+  .message-bubble {
+    max-width: 85%;
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    word-break: break-word;
+    position: relative;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    transition: all 0.25s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .message-bubble.user {
+    background: linear-gradient(135deg, rgba(16, 46, 84, 0.75), rgba(8, 26, 52, 0.85));
+    border: 1px solid rgba(0, 242, 255, 0.35);
+    color: #ffffff;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+
+  .message-bubble.assistant {
+    background: linear-gradient(135deg, rgba(14, 18, 38, 0.8), rgba(6, 10, 24, 0.9));
+    border: 1px solid var(--glass-border);
+    color: var(--text-bright);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+
+  .message-bubble:hover {
+    border-color: var(--cyan-primary);
+    box-shadow: 0 0 20px var(--cyan-glow);
+  }
+
+  .sender-name {
+    font-weight: 700;
+    font-size: 11.5px;
+    letter-spacing: 0.5px;
+    color: var(--cyan-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .message-bubble.user .sender-name {
+    color: #70d8ff;
+  }
+
+  .msg-content {
+    white-space: pre-wrap;
+  }
+
+  /* Floating Bottom Voice HUD Bar */
+  .bottom-voice-hud {
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 40px;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    z-index: 10;
+  }
+
+  .voice-mic-trigger {
+    background: rgba(0, 242, 255, 0.12);
+    color: var(--cyan-primary);
+    border: 1px solid var(--cyan-primary);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 0 18px var(--cyan-glow);
+  }
+
+  .voice-mic-trigger:hover {
+    background: rgba(0, 242, 255, 0.28);
+    transform: scale(1.08);
+    box-shadow: 0 0 25px var(--cyan-glow);
+  }
+
+  .voice-mic-trigger.active-mic {
+    background: rgba(255, 71, 87, 0.25);
+    border-color: var(--rose-red);
+    color: var(--rose-red);
+    box-shadow: 0 0 25px rgba(255, 71, 87, 0.6);
+    animation: micPulse 1.2s infinite;
+  }
+
+  @keyframes micPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.5); }
+    50% { box-shadow: 0 0 0 14px rgba(255, 71, 87, 0); }
+  }
+
+  .voice-hud-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .voice-hud-status {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-bright);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--cyan-primary);
+    box-shadow: 0 0 10px var(--cyan-primary);
+    transition: background 0.3s ease;
+  }
+
+  .status-dot.listening { background: var(--cyan-primary); }
+  .status-dot.processing { background: var(--amber-gold); }
+  .status-dot.speaking { background: var(--emerald-green); }
+
+  /* Live Multi-Frequency Spectrum VU Meter Bar */
+  .vu-spectrum-container {
+    width: 100%;
+    height: 5px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid rgba(0,242,255,0.2);
+  }
+
+  .vu-spectrum-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--cyan-primary), var(--purple-neon));
+    box-shadow: 0 0 12px var(--cyan-primary);
+    transition: width 0.08s ease-out;
+  }
+
+  /* Modals & Overlays */
+  .overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 4, 10, 0.85);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .overlay-card {
+    background: rgba(8, 14, 30, 0.95);
+    border: 1px solid var(--cyan-primary);
+    border-radius: 24px;
+    padding: 32px;
+    width: 420px;
+    max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 35px var(--cyan-glow);
+  }
+
+  .overlay-card h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    color: var(--cyan-primary);
+    margin-bottom: 10px;
+  }
+
+  .overlay-card p {
+    color: var(--text-muted);
+    font-size: 13.5px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .profile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .profile-item {
+    background: rgba(4, 12, 32, 0.8);
+    border: 1px solid var(--glass-border);
+    color: var(--text-bright);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .profile-item:hover {
+    border-color: var(--cyan-primary);
+    background: rgba(0, 242, 255, 0.1);
+    box-shadow: 0 0 14px var(--cyan-glow);
+  }
+
+  .text-input-field {
+    width: 100%;
+    background: rgba(4, 12, 32, 0.9);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .text-input-field:focus {
+    border-color: var(--cyan-primary);
+  }
+
+  .overlay-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    border-radius: 12px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary {
+    background: var(--cyan-primary);
+    color: #02040a;
+    border-color: var(--cyan-primary);
+    box-shadow: 0 0 18px var(--cyan-glow);
+  }
+
+  .btn-primary:hover {
+    background: #52f6ff;
+    transform: translateY(-1px);
+  }
+
+  .btn-danger {
+    background: rgba(255, 71, 87, 0.2);
+    color: var(--rose-red);
+    border-color: var(--rose-red);
+  }
+
+  /* Toasts */
+  #toasts {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 120;
+  }
+
+  .toast {
+    background: rgba(8, 16, 36, 0.95);
+    border: 1px solid var(--cyan-primary);
+    color: var(--text-bright);
+    border-radius: 14px;
+    padding: 14px 20px;
+    font-size: 13.5px;
+    max-width: 350px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    animation: slideInRight 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Fullscreen Ambient Neural Web Particle Background -->
+<canvas id="bg-neural-canvas"></canvas>
+
+<!-- Main App HUD Viewport -->
+<div id="app">
+  
+  <!-- Top Minimalist Bar -->
+  <div class="top-hud-bar">
+    <div class="brand-group">
+      <div class="brand-logo">
+        <i class="fa-solid fa-brain"></i>
+        <span>YU</span>
+      </div>
+      <div class="synapse-pill" title="Red Neuronal 3D Activa">
+        <i class="fa-solid fa-diagram-project"></i>
+        <span>MATRIZ 3D SINÁPTICA</span>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button id="profile-btn" class="glass-pill" title="Cambiar Perfil">
+        <i class="fa-solid fa-user-gear"></i>
+        <span id="current-profile-name">Perfil</span>
+      </button>
+      <button id="audio-toggle-btn" class="glass-btn" title="Efectos de Sonido">
+        <i class="fa-solid fa-volume-high"></i>
+      </button>
+      <button id="clear-chat-btn" class="glass-btn" title="Limpiar Conversación">
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Connection Alert Banner -->
+  <div id="conn-banner">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    Conexión interrumpida con el servidor de YU — Reconectando...
+  </div>
+
+  <!-- Center Holographic 3D Neural Visualizer Area -->
+  <div class="center-neural-workspace">
+    <div id="canvas-wrapper" title="Matriz Neuronal 3D de YU — Toca para hablar">
+      <canvas id="jarvis-canvas" width="460" height="460"></canvas>
+      <i id="hud-icon" class="fa-solid fa-brain hud-center-icon"></i>
+    </div>
+    <div id="hud-caption" class="hud-caption">Cerebro Neuronal 3D Activo • Habla libremente</div>
+    
+    <!-- Real-Time Speech Recognition Subtitles Capsule -->
+    <div id="live-transcript" class="live-transcript-box hidden">
+      <i class="fa-solid fa-waveform-lines"></i>
+      <span id="live-transcript-text">Escuchando voz...</span>
+      <span id="confidence-badge" class="confidence-badge" style="display:none">100%</span>
+    </div>
+
+    <!-- Floating Clean Transcripts Feed -->
+    <div id="chat-feed">
+      <!-- Transcripts appended dynamically -->
+    </div>
+  </div>
+
+  <!-- Floating Bottom Voice HUD Bar -->
+  <div class="bottom-voice-hud">
+    <button id="mic-btn" class="voice-mic-trigger" title="Activar Micrófono">
+      <i class="fa-solid fa-microphone"></i>
+    </button>
+    
+    <div class="voice-hud-info">
+      <div class="voice-hud-status">
+        <div id="status-dot" class="status-dot"></div>
+        <span id="voice-status-text">Red Sináptica 3D activa por voz — Medidor VU en tiempo real</span>
+      </div>
+      <div class="vu-spectrum-container" title="Nivel de Audio en Tiempo Real">
+        <div id="vu-meter-bar" class="vu-spectrum-bar"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toasts -->
+<div id="toasts"></div>
+
+<!-- Profile Selection Modal -->
+<div id="profile-overlay" class="overlay-backdrop" style="display:none">
+  <div class="overlay-card">
+    <h2><i class="fa-solid fa-user-astronaut"></i> Seleccionar Perfil</h2>
+    <p>Elige tu perfil activo para personalizar la voz, tono y memoria con YU.</p>
+    <div id="profile-list" class="profile-list"></div>
+    <div style="margin-top: 15px;">
+      <input id="new-profile-name" type="text" class="text-input-field" placeholder="Nombre del nuevo perfil..." />
+      <div class="overlay-actions">
+        <button id="create-profile-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Crear Perfil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Overlay for High Risk Tasks -->
+<div id="confirmation-overlay" class="overlay-backdrop" style="display:none">
+  <div class="overlay-card">
+    <div id="confirm-risk-tag" style="display:inline-block; font-size:11px; font-weight:700; padding:4px 10px; border-radius:6px; margin-bottom:12px; letter-spacing:1px; background:rgba(255,184,77,0.2); color:#ffb84d; border:1px solid #ffb84d;">RIESGO ALTO</div>
+    <h2><i class="fa-solid fa-shield-halved"></i> Permiso Requerido</h2>
+    <p id="confirm-description">YU necesita tu confirmación para continuar.</p>
+    <div class="overlay-actions">
+      <button id="confirm-deny" class="btn btn-danger"><i class="fa-solid fa-xmark"></i> Denegar</button>
+      <button id="confirm-grant" class="btn btn-primary"><i class="fa-solid fa-check"></i> Permitir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ----------------------------------------------------
+  // Ultra-Lightweight Background Neural Particle Web (No CPU shadowBlur)
+  // ----------------------------------------------------
+  (function initBackgroundNeuralWeb() {
+    const bgCanvas = document.getElementById("bg-neural-canvas");
+    if (!bgCanvas) return;
+    const bgCtx = bgCanvas.getContext("2d");
+    let width = (bgCanvas.width = window.innerWidth);
+    let height = (bgCanvas.height = window.innerHeight);
+
+    window.addEventListener("resize", () => {
+      width = bgCanvas.width = window.innerWidth;
+      height = bgCanvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    const particleCount = 28;
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        radius: Math.random() * 1.8 + 1,
+      });
+    }
+
+    function drawBgWeb() {
+      bgCtx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particleCount; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        bgCtx.beginPath();
+        bgCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        bgCtx.fillStyle = "rgba(0, 242, 255, 0.4)";
+        bgCtx.fill();
+
+        for (let j = i + 1; j < particleCount; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const distSq = dx * dx + dy * dy;
+
+          if (distSq < 16000) { // 126px distance
+            const dist = Math.sqrt(distSq);
+            bgCtx.beginPath();
+            bgCtx.moveTo(p.x, p.y);
+            bgCtx.lineTo(p2.x, p2.y);
+            bgCtx.strokeStyle = `rgba(0, 242, 255, ${0.14 * (1 - dist / 126)})`;
+            bgCtx.lineWidth = 0.7;
+            bgCtx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(drawBgWeb);
+    }
+    drawBgWeb();
+  })();
+
+  (function () {
+    "use strict";
+
+    // DOM Elements
+    const chatFeed = document.getElementById("chat-feed");
+    const micBtn = document.getElementById("mic-btn");
+    const statusDot = document.getElementById("status-dot");
+    const connBanner = document.getElementById("conn-banner");
+    const toasts = document.getElementById("toasts");
+    const clearChatBtn = document.getElementById("clear-chat-btn");
+    const audioToggleBtn = document.getElementById("audio-toggle-btn");
+    const voiceStatusText = document.getElementById("voice-status-text");
+    const vuMeterBar = document.getElementById("vu-meter-bar");
+
+    const liveTranscriptBox = document.getElementById("live-transcript");
+    const liveTranscriptText = document.getElementById("live-transcript-text");
+    const confidenceBadge = document.getElementById("confidence-badge");
+
+    const profileOverlay = document.getElementById("profile-overlay");
+    const profileBtn = document.getElementById("profile-btn");
+    const profileListEl = document.getElementById("profile-list");
+    const currentProfileName = document.getElementById("current-profile-name");
+    const newProfileInput = document.getElementById("new-profile-name");
+    const createProfileBtn = document.getElementById("create-profile-btn");
+
+    const confirmOverlay = document.getElementById("confirmation-overlay");
+    const confirmDescription = document.getElementById("confirm-description");
+    const confirmRiskTag = document.getElementById("confirm-risk-tag");
+    const confirmGrant = document.getElementById("confirm-grant");
+    const confirmDeny = document.getElementById("confirm-deny");
+
+    let soundEnabled = true;
+    window.YU_ASSISTANT_NAME = "YU";
+    window.YU_USER_NAME = "Tú";
+    let activeConfirmationId = null;
+    let ws = null;
+    let reconnectTimer = null;
+    let micAudioVolume = 0; // Live audio level 0 to 100
+
+    // Web Audio Synthesizer for UI Chimes
+    function playUiSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'send' || type === 'chime_start') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(1046.50, ctx.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.15);
+        } else if (type === 'receive' || type === 'chime_end') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(880, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.18);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.18);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.18);
+        }
+      } catch (e) {}
+    }
+
+    // ----------------------------------------------------
+    // Real-Time Web Audio API Analyzer for Microphone
+    // ----------------------------------------------------
+    let audioCtx = null;
+    let analyser = null;
+    let micStream = null;
+
+    async function initRealtimeAudioAnalyser() {
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+        micStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+        const source = audioCtx.createMediaStreamSource(micStream);
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        function updateVolumeMeter() {
+          if (analyser) {
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+              sum += dataArray[i];
+            }
+            const average = sum / dataArray.length;
+            micAudioVolume = Math.min(100, Math.round((average / 128) * 100));
+            if (vuMeterBar) vuMeterBar.style.width = micAudioVolume + "%";
+          }
+          requestAnimationFrame(updateVolumeMeter);
+        }
+        updateVolumeMeter();
+      } catch (e) {
+        console.warn("Audio Analyser Warning:", e);
+      }
+    }
+
+    initRealtimeAudioAnalyser();
+
+    audioToggleBtn.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      audioToggleBtn.innerHTML = soundEnabled ? '<i class="fa-solid fa-volume-high"></i>' : '<i class="fa-solid fa-volume-xmark"></i>';
+      showToast(soundEnabled ? "Efectos de sonido activados" : "Efectos de sonido desactivados");
+    });
+
+    clearChatBtn.addEventListener('click', () => {
+      chatFeed.innerHTML = '';
+      showToast("Conversación limpiada");
+    });
+
+    // ----------------------------------------------------
+    // 60FPS HIGH-PERFORMANCE 3D HOLOGRAPHIC NEURAL BRAIN (Hardware Accelerated)
+    // ----------------------------------------------------
+    const canvas = document.getElementById("jarvis-canvas");
+    const ctx = canvas.getContext("2d");
+    const hudIcon = document.getElementById("hud-icon");
+    const hudCaption = document.getElementById("hud-caption");
+    let currentState = "idle";
+    
+    // 3D Rotational Angles
+    let rotX = 0;
+    let rotY = 0;
+    let rotZ = 0;
+
+    const STATE_CONFIG = {
+      idle: { label: "Matriz Neuronal 3D Activa • Toca para hablar", color: "#00f2ff", icon: "fa-brain" },
+      listening: { label: "Sinapsis 3D Escuchando Voz...", color: "#00f2ff", icon: "fa-waveform-lines" },
+      processing: { label: "Procesando Impulso Neuronal 3D...", color: "#ffb84d", icon: "fa-diagram-project" },
+      speaking: { label: "Emitiendo Respuesta...", color: "#2ecc71", icon: "fa-volume-high" },
+      error: { label: "Error de Sinapsis 3D", color: "#ff4757", icon: "fa-circle-exclamation" }
+    };
+
+    // Generate 52 3D Spherical Neural Soma Nodes (Optimal balance of rich density & 60 FPS speed)
+    const total3DNodes = 52;
+    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+    const nodes3D = [];
+
+    for (let i = 0; i < total3DNodes; i++) {
+      const y = 1 - (i / (total3DNodes - 1)) * 2;
+      const radiusAtY = Math.sqrt(1 - y * y);
+      const theta = phi * i;
+      const x = Math.cos(theta) * radiusAtY;
+      const z = Math.sin(theta) * radiusAtY;
+      nodes3D.push({
+        x, y, z,
+        baseSize: Math.random() * 3 + 2.5,
+        sparkPos: Math.random(),
+        sparkSpeed: 0.018 + Math.random() * 0.02
+      });
+    }
+
+    // Pre-calculate 3D Synaptic Connections Index Map once (Eliminates O(N^2) calculation on every frame!)
+    const synapses3D = [];
+    for (let i = 0; i < total3DNodes; i++) {
+      for (let j = i + 1; j < total3DNodes; j++) {
+        const dx = nodes3D[i].x - nodes3D[j].x;
+        const dy = nodes3D[i].y - nodes3D[j].y;
+        const dz = nodes3D[i].z - nodes3D[j].z;
+        const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (d < 0.62) {
+          synapses3D.push({ i, j, dist: d });
+        }
+      }
+    }
+
+    function drawNeuralHUD3D() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const config = STATE_CONFIG[currentState] || STATE_CONFIG.idle;
+
+      // Smooth 3D Rotation Math
+      const speedMult = (currentState === 'processing' ? 2.5 : (currentState === 'listening' ? 1.5 : 1.0));
+      rotY += 0.008 * speedMult;
+      rotX += 0.005 * speedMult;
+      rotZ += 0.003 * speedMult;
+
+      const audioBoost = (currentState === 'listening' ? (micAudioVolume / 100) * 40 : 0);
+      const sphereRadius = 175 + audioBoost * 1.1;
+      const fov = 440;
+
+      // 1. Draw 3D Orbiting Gyroscope Ring
+      ctx.save();
+      const ringPoints = 48;
+      ctx.beginPath();
+      for (let i = 0; i <= ringPoints; i++) {
+        const angle = (i / ringPoints) * Math.PI * 2;
+        const rx = Math.cos(angle) * (sphereRadius + 22);
+        const ry = Math.sin(angle) * (sphereRadius + 22);
+        const rz = 0;
+
+        let x1 = rx * Math.cos(rotY) - rz * Math.sin(rotY);
+        let z1 = rz * Math.cos(rotY) + rx * Math.sin(rotY);
+        let y2 = ry * Math.cos(rotX) - z1 * Math.sin(rotX);
+        let z2 = z1 * Math.cos(rotX) + ry * Math.sin(rotX);
+
+        const scale = fov / (fov + z2);
+        const px = cx + x1 * scale;
+        const py = cy + y2 * scale;
+
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = config.color;
+      ctx.lineWidth = 1.8;
+      ctx.globalAlpha = 0.5;
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Project 3D Nodes to 2D Screen Space
+      const projectedNodes = new Array(total3DNodes);
+      for (let i = 0; i < total3DNodes; i++) {
+        const n = nodes3D[i];
+
+        // 3D Matrix Rotations
+        let x1 = n.x * Math.cos(rotY) - n.z * Math.sin(rotY);
+        let z1 = n.z * Math.cos(rotY) + n.x * Math.sin(rotY);
+        let y2 = n.y * Math.cos(rotX) - z1 * Math.sin(rotX);
+        let z2 = z1 * Math.cos(rotX) + n.y * Math.sin(rotX);
+        let x3 = x1 * Math.cos(rotZ) - y2 * Math.sin(rotZ);
+        let y3 = y2 * Math.cos(rotZ) + x1 * Math.sin(rotZ);
+
+        const scale = fov / (fov + z2 * sphereRadius);
+        const projX = cx + x3 * sphereRadius * scale;
+        const projY = cy + y3 * sphereRadius * scale;
+        const opacity = Math.max(0.2, Math.min(1.0, (z2 + 1.2) / 2.2));
+
+        n.sparkPos = (n.sparkPos + n.sparkSpeed) % 1;
+
+        projectedNodes[i] = {
+          x: projX,
+          y: projY,
+          z: z2,
+          scale: scale,
+          size: n.baseSize * scale * (1 + audioBoost * 0.012),
+          opacity: opacity,
+          sparkPos: n.sparkPos
+        };
+      }
+
+      // 3. Draw Pre-calculated 3D Synapses & Electric Sparks (Fast 60FPS loop)
+      ctx.save();
+      const synapseLen = synapses3D.length;
+      for (let k = 0; k < synapseLen; k++) {
+        const syn = synapses3D[k];
+        const p1 = projectedNodes[syn.i];
+        const p2 = projectedNodes[syn.j];
+
+        const avgOpacity = (p1.opacity + p2.opacity) * 0.5;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.strokeStyle = config.color;
+        ctx.globalAlpha = (1 - syn.dist / 0.62) * 0.5 * avgOpacity;
+        ctx.lineWidth = 1 * p1.scale;
+        ctx.stroke();
+
+        // Spark pulse
+        const sparkX = p1.x + (p2.x - p1.x) * p1.sparkPos;
+        const sparkY = p1.y + (p2.y - p1.y) * p1.sparkPos;
+        ctx.beginPath();
+        ctx.arc(sparkX, sparkY, 1.6 * p1.scale, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.globalAlpha = avgOpacity;
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // 4. Draw 3D Neural Soma Nodes (Depth Sorted implicit rendering)
+      ctx.save();
+      for (let i = 0; i < total3DNodes; i++) {
+        const p = projectedNodes[i];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = config.color;
+        ctx.globalAlpha = p.opacity;
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // 5. Central Glowing Nucleus Core
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, 42 + (audioBoost * 0.5), 0, Math.PI * 2);
+      ctx.fillStyle = config.color;
+      ctx.globalAlpha = 0.22 + (audioBoost * 0.005);
+      ctx.fill();
+      ctx.restore();
+
+      requestAnimationFrame(drawNeuralHUD3D);
+    }
+
+    drawNeuralHUD3D();
+
+    function setState(state) {
+      currentState = state;
+      const config = STATE_CONFIG[state] || STATE_CONFIG.idle;
+
+      if (statusDot) statusDot.className = "status-dot " + state;
+      if (hudCaption) hudCaption.textContent = config.label;
+      if (hudIcon) {
+        hudIcon.className = "fa-solid " + config.icon + " hud-center-icon";
+        hudIcon.style.color = config.color;
+        hudIcon.style.textShadow = `0 0 25px ${config.color}`;
+
+        if (state === 'processing') {
+          hudIcon.classList.add("fa-spin");
+        } else {
+          hudIcon.classList.remove("fa-spin");
+        }
+      }
+
+      if (state === 'listening') {
+        playUiSound('chime_start');
+        if (liveTranscriptBox) {
+          liveTranscriptBox.classList.remove("hidden");
+          liveTranscriptText.innerHTML = '<span class="interim-text">Escuchando voz... habla ahora</span>';
+        }
+      } else if (state === 'processing' && liveTranscriptBox) {
+        liveTranscriptText.innerHTML = '<span>⚡ Procesando impulso sináptico 3D...</span>';
+      } else if (state === 'speaking' || state === 'idle') {
+        if (state === 'speaking') playUiSound('chime_end');
+        setTimeout(() => {
+          if (currentState !== 'listening' && liveTranscriptBox) {
+            liveTranscriptBox.classList.add("hidden");
+          }
+        }, 1800);
+      }
+    }
+
+    // ----------------------------------------------------
+    // Transcripts Stream
+    // ----------------------------------------------------
+    function appendMessage(role, text) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = "message-bubble " + (role === "assistant" ? "assistant" : "user");
+
+      const senderSpan = document.createElement("div");
+      senderSpan.className = "sender-name";
+      senderSpan.innerHTML = role === "assistant" 
+        ? `<i class="fa-solid fa-brain"></i> ${window.YU_ASSISTANT_NAME}`
+        : `<i class="fa-solid fa-microphone"></i> Transcripción de Voz`;
+
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "msg-content";
+
+      msgDiv.appendChild(senderSpan);
+      msgDiv.appendChild(contentDiv);
+
+      chatFeed.appendChild(msgDiv);
+
+      if (role === "assistant") {
+        let charIndex = 0;
+        contentDiv.textContent = "";
+        const timer = setInterval(() => {
+          if (charIndex < text.length) {
+            contentDiv.textContent += text.charAt(charIndex);
+            charIndex++;
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+          } else {
+            clearInterval(timer);
+          }
+        }, 16);
+      } else {
+        contentDiv.textContent = text;
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+      }
+
+      if (role === 'user' && voiceStatusText) {
+        voiceStatusText.innerHTML = `<strong>Lo que dijiste:</strong> "${text}"`;
+      }
+    }
+
+    function showToast(message) {
+      const el = document.createElement("div");
+      el.className = "toast";
+      el.innerHTML = `<i class="fa-solid fa-circle-info" style="color:var(--cyan-primary)"></i> <span>${message}</span>`;
+      toasts.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(20px)';
+        el.style.transition = 'all 0.3s ease';
+        setTimeout(() => el.remove(), 300);
+      }, 4500);
+    }
+
+    // ----------------------------------------------------
+    // WebSocket Communication
+    // ----------------------------------------------------
+    function connect() {
+      const proto = location.protocol === "https:" ? "wss:" : "ws:";
+      ws = new WebSocket(proto + "//" + location.host + "/ws/stream");
+
+      ws.onopen = () => {
+        connBanner.classList.remove("show");
+        showToast("Conectado con la Matriz Neuronal 3D de YU");
+      };
+
+      ws.onclose = () => {
+        connBanner.classList.add("show");
+        reconnectTimer = setTimeout(connect, 2500);
+      };
+
+      ws.onerror = () => ws.close();
+
+      ws.onmessage = (event) => {
+        let data;
+        try {
+          data = JSON.parse(event.data);
+        } catch (e) {
+          return;
+        }
+        handleServerEvent(data);
+      };
+    }
+
+    function handleServerEvent(data) {
+      switch (data.type) {
+        case "message":
+          appendMessage(data.role, data.text);
+          break;
+        case "state":
+          setState(data.state);
+          break;
+        case "confirmation":
+          showConfirmation(data.id, data.description, data.risk);
+          break;
+        case "error":
+          showToast(data.message || "Error del sistema");
+          break;
+      }
+    }
+
+    function sendText(text) {
+      if (!text.trim()) return;
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        showToast("No hay conexión activa con YU");
+        return;
+      }
+      ws.send(JSON.stringify({ text }));
+    }
+
+    window.yuSendText = sendText;
+
+    // ----------------------------------------------------
+    // Speech Recognition
+    // ----------------------------------------------------
+    let recognition = null;
+    let silenceTimer = null;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = 'es-ES';
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        if (micBtn) micBtn.classList.add("active-mic");
+        setState("listening");
+        if (liveTranscriptBox) {
+          liveTranscriptBox.classList.remove("hidden");
+          liveTranscriptText.innerHTML = '<span class="interim-text">Escuchando voz... habla ahora...</span>';
+          if (confidenceBadge) confidenceBadge.style.display = "none";
+        }
+      };
+
+      recognition.onresult = (event) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+        let confidenceScore = 0;
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+            confidenceScore = Math.round((event.results[i][0].confidence || 0.95) * 100);
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+            confidenceScore = Math.round((event.results[i][0].confidence || 0.9) * 100);
+          }
+        }
+
+        clearTimeout(silenceTimer);
+        silenceTimer = setTimeout(() => {
+          if (interimTranscript && !finalTranscript) {
+            finalTranscript = interimTranscript;
+          }
+          if (finalTranscript) {
+            try { recognition.stop(); } catch(e){}
+          }
+        }, 1400);
+
+        if (confidenceBadge && confidenceScore > 0) {
+          confidenceBadge.style.display = "inline-block";
+          confidenceBadge.textContent = `🎯 ${confidenceScore}%`;
+        }
+
+        if (interimTranscript && liveTranscriptText) {
+          liveTranscriptText.innerHTML = `<strong>Diciendo:</strong> <span class="interim-text">"${interimTranscript}"</span>`;
+        }
+
+        if (finalTranscript) {
+          if (liveTranscriptText) {
+            liveTranscriptText.innerHTML = `<strong>Capturado:</strong> "${finalTranscript}"`;
+          }
+          sendText(finalTranscript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        showToast("Error en micrófono: " + event.error);
+        setState("idle");
+      };
+
+      recognition.onend = () => {
+        clearTimeout(silenceTimer);
+        if (micBtn) micBtn.classList.remove("active-mic");
+        setTimeout(() => {
+          if (liveTranscriptBox && currentState !== 'listening') {
+            liveTranscriptBox.classList.add("hidden");
+          }
+        }, 1800);
+        setState("idle");
+      };
+
+      if (micBtn) {
+        micBtn.addEventListener("click", () => {
+          try {
+            recognition.start();
+          } catch (e) {
+            recognition.stop();
+          }
+        });
+      }
+    } else {
+      if (micBtn) micBtn.style.display = 'none';
+    }
+
+    document.getElementById("canvas-wrapper").addEventListener("click", () => {
+      if (recognition) {
+        try { recognition.start(); } catch (e) { recognition.stop(); }
+      } else {
+        showToast("Servicio de voz en vivo activo en la PC.");
+      }
+    });
+
+    // ----------------------------------------------------
+    // Confirmation Overlay
+    // ----------------------------------------------------
+    function showConfirmation(id, description, risk) {
+      activeConfirmationId = id;
+      confirmDescription.textContent = description;
+      confirmRiskTag.textContent = "RIESGO " + risk.toUpperCase();
+      confirmRiskTag.className = risk === "critical" ? "btn-danger" : "btn-primary";
+      confirmOverlay.style.display = "flex";
+    }
+
+    function resolveConfirmation(granted) {
+      if (!activeConfirmationId || !ws || ws.readyState !== WebSocket.OPEN) return;
+      ws.send(JSON.stringify({ type: "confirmation_response", id: activeConfirmationId, granted }));
+      activeConfirmationId = null;
+      confirmOverlay.style.display = "none";
+    }
+
+    confirmGrant.addEventListener("click", () => resolveConfirmation(true));
+    confirmDeny.addEventListener("click", () => resolveConfirmation(false));
+
+    // ----------------------------------------------------
+    // Profiles Management
+    // ----------------------------------------------------
+    profileBtn.addEventListener("click", () => {
+      profileOverlay.style.display = "flex";
+      loadProfiles();
+    });
+
+    async function loadProfiles() {
+      try {
+        const res = await fetch("/api/profiles");
+        const data = await res.json();
+        profileListEl.innerHTML = "";
+        (data.profiles || []).forEach((name) => {
+          const item = document.createElement("div");
+          item.className = "profile-item";
+          item.innerHTML = `<span><i class="fa-solid fa-circle-user"></i> ${name}</span> <i class="fa-solid fa-chevron-right" style="font-size:12px; opacity:0.5;"></i>`;
+          item.addEventListener("click", () => selectProfile(name));
+          profileListEl.appendChild(item);
+        });
+      } catch (e) {
+        showToast("Error al cargar los perfiles");
+      }
+    }
+
+    async function selectProfile(name) {
+      try {
+        const res = await fetch("/api/profiles/select", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+        if (!res.ok) throw new Error("Select failed");
+        const data = await res.json();
+        window.YU_ASSISTANT_NAME = data.profile.assistant_name || "YU";
+        currentProfileName.textContent = name;
+        profileOverlay.style.display = "none";
+        showToast("Perfil '" + name + "' activado");
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+          connect();
+        }
+      } catch (e) {
+        showToast("No se pudo seleccionar el perfil");
+      }
+    }
+
+    createProfileBtn.addEventListener("click", async () => {
+      const name = newProfileInput.value.trim();
+      if (!name) return;
+      try {
+        const res = await fetch("/api/profiles", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+        if (res.status === 409) {
+          showToast("Ya existe un perfil con ese nombre");
+          return;
+        }
+        if (!res.ok) throw new Error("Create failed");
+        newProfileInput.value = "";
+        await selectProfile(name);
+      } catch (e) {
+        showToast("No se pudo crear el perfil");
+      }
+    });
+
+    profileOverlay.addEventListener("click", (e) => {
+      if (e.target === profileOverlay) profileOverlay.style.display = "none";
+    });
+
+    // Startup Init
+    loadProfiles();
+    connect();
+    setState("idle");
+  })();
+</script>
+</body>
+</html>

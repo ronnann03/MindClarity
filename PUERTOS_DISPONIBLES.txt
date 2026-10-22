@@ -1,0 +1,90 @@
+================================================================================
+                    YU - SELECCIONAR PUERTO API REST
+================================================================================
+
+El puerto 8000 está ocupado. Aquí están tus OPCIONES:
+
+================================================================================
+OPCION 1: USAR PUERTO PRE-CONFIGURADO (MAS FACIL)
+================================================================================
+
+Puerto 8080:    Haz doble clic en START_YU_API_8080.bat
+                Accede a: http://localhost:8080
+
+Puerto 8888:    Haz doble clic en START_YU_API_8888.bat
+                Accede a: http://localhost:8888
+
+Puerto 9000:    Haz doble clic en START_YU_API_9000.bat
+                Accede a: http://localhost:9000
+
+================================================================================
+OPCION 2: PUERTO PERSONALIZADO (Desde terminal)
+================================================================================
+
+Abre PowerShell o CMD y ejecuta:
+
+  cd "Yu IA"
+  python -m uvicorn api.server:app --reload --port 3000
+
+Reemplaza 3000 con el puerto que quieras (ejemplo: 5000, 7000, 9001, etc)
+
+================================================================================
+OPCION 3: USAR EL SCRIPT CON PARAMETRO
+================================================================================
+
+Abre PowerShell/CMD y ejecuta:
+
+  .\START_YU_API.bat 3000
+
+Reemplaza 3000 con tu puerto
+
+================================================================================
+PUERTOS RECOMENDADOS
+================================================================================
+
+PUERTO | ESTADO | DESCRIPCION
+-------|--------|------------------------
+3000   | Libre  | Node.js / frontend común
+3001   | Libre  | Alternativa a 3000
+5000   | Libre  | Flask / desarrollo
+5001   | Libre  | Alternativa a 5000
+7000   | Libre  | Desarrollo general
+8000   | OCUPADO| Tu otro proyecto
+8080   | Probablemente libre | HTTP alterno
+8888   | Probablemente libre | Jupyter / desarrollo
+9000   | Probablemente libre | Desarrollo
+9001   | Probablemente libre | Alternativa a 9000
+
+================================================================================
+COMO VERIFICAR SI UN PUERTO ESTA LIBRE
+================================================================================
+
+Abre PowerShell como ADMINISTRADOR y ejecuta:
+
+  netstat -ano | findstr :3000
+
+Reemplaza 3000 con el puerto. Si no devuelve nada, ¡está libre!
+
+================================================================================
+MI RECOMENDACION
+================================================================================
+
+Usa el puerto 8080:
+  - Es estándar
+  - Probablemente está libre
+  - Haz doble clic en START_YU_API_8080.bat
+  - Accede a http://localhost:8080
+
+================================================================================
+DOCUMENTACION
+================================================================================
+
+Una vez que YU API esté corriendo en tu puerto elegido, accede a:
+
+  http://localhost:TU_PUERTO/docs
+
+Verás la documentación interactiva completa.
+
+================================================================================
+¡SELECCIONA TU PUERTO Y COMIENZA!
+================================================================================
